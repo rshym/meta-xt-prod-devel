@@ -5,7 +5,10 @@ python __anonymous () {
     product_name = d.getVar('XT_PRODUCT_NAME', True)
     folder_name = product_name.replace("-", "_")
     d.setVar('XT_MANIFEST_FOLDER', folder_name)
-    if product_name == "prod-devel-src" and not "domu" in d.getVar('XT_GUESTS_BUILD', True).split():
+
+    # If any VIS plugin is defined then we need
+    # to use meta-aos as provider of VIS for domd
+    if d.getVar('AOS_VIS_PLUGINS', True):
         d.appendVar("XT_QUIRK_BB_ADD_LAYER", "meta-aos")
 
     if product_name == "prod-devel-src": 
@@ -160,6 +163,8 @@ configure_versions_rcar() {
 
     if [ ! -z "${AOS_VIS_PLUGINS}" ];then
         base_update_conf_value ${local_conf} AOS_VIS_PLUGINS "${AOS_VIS_PLUGINS}"
+    else
+        base_add_conf_value ${local_conf} BBMASK "meta-xt-prod-extra/recipes-aos/aos-vis/"
     fi
 
     # Disable shared link for GO packages
@@ -212,6 +217,8 @@ do_install_append () {
     find ${LAYERDIR}/doc -iname "u-boot-env*" -exec cp -f {} ${DEPLOY_DIR}/domd-image-weston/images/${MACHINE}-xt \; || true
     find ${LAYERDIR}/doc -iname "mk_sdcard_image.sh" -exec cp -f {} ${DEPLOY_DIR}/domd-image-weston/images/${MACHINE}-xt \; \
     -exec cp -f {} ${DEPLOY_DIR} \; || true
-    find ${DEPLOY_DIR}/${PN}/ipk/aarch64 -iname "aos-vis_git*" -exec cp -f {} ${DEPLOY_DIR}/domd-image-weston/images/${MACHINE}-xt \; && \
-    find ${DEPLOY_DIR}/domd-image-weston/images/${MACHINE}-xt -iname "aos-vis_git*" -exec ln -sfr {} ${DEPLOY_DIR}/domd-image-weston/images/${MACHINE}-xt/aos-vis \; || true
+    if [ ! -z "${AOS_VIS_PLUGINS}" ]; then
+        find ${DEPLOY_DIR}/${PN}/ipk/aarch64 -iname "aos-vis_git*" -exec cp -f {} ${DEPLOY_DIR}/domd-image-weston/images/${MACHINE}-xt \; && \
+        find ${DEPLOY_DIR}/domd-image-weston/images/${MACHINE}-xt -iname "aos-vis_git*" -exec ln -sfr {} ${DEPLOY_DIR}/domd-image-weston/images/${MACHINE}-xt/aos-vis \; || true
+    fi
 }
