@@ -9,7 +9,7 @@ python __anonymous () {
     # If any VIS plugin is defined then we need
     # to use meta-aos as provider of VIS for domd
     if d.getVar('AOS_VIS_PLUGINS', True):
-        d.appendVar("XT_QUIRK_BB_ADD_LAYER", "meta-aos")
+        d.appendVar("XT_QUIRK_BB_ADD_LAYER", " meta-aos ")
 
     if product_name == "prod-devel-src": 
         if d.getVar('XT_RCAR_EVAPROPRIETARY_DIR'):

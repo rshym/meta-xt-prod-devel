@@ -16,9 +16,9 @@ IMAGE_INSTALL_append = " \
 
 python __anonymous () {
     if d.getVar("AOS_VIS_PLUGINS", True):
-        d.appendVar("IMAGE_INSTALL", "aos-vis")
+        d.appendVar("IMAGE_INSTALL", " aos-vis ")
     if d.getVar("AOS_VIS_PACKAGE_DIR", True):
-        d.appendVar("IMAGE_INSTALL", "ca-certificates")
+        d.appendVar("IMAGE_INSTALL", " ca-certificates ")
 }
 
 # Configuration for ARM Trusted Firmware
